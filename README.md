@@ -20,7 +20,7 @@ This project combines:
 - image preprocessing
 - model inference
 
-The project focuses on **plant identification from leaf images**, not plant disease diagnosis.
+The project focuses on **plant identification from leaf images**.
 
 ---
 
