@@ -83,11 +83,6 @@ The model is loaded from:
 plant_village_model.h5
 ```
 
-The corresponding class labels are stored in:
-
-```text
-labels.txt
-```
 
 The prediction logic is implemented in Python and connects the trained model to the Flask application.
 
