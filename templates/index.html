@@ -4,79 +4,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarım Ürünleri Görü</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+
+    <title>Leaf-Based Plant Identification</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
     <style>
-        body{
-            header {
-            background-image: linear-gradient(to bottom, rgb(80,80,80, 0.2), rgb(20,20,20, 0.6)), url('static/img/tarim_bitki.jpg');
-            background-repeat: no-repeat;
-            background-attachment: fixed;  
-            background-size: cover;
+        * {
+            box-sizing: border-box;
         }
-    }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f3;
+            color: #1f2937;
+        }
+
+        .hero {
+            min-height: 300px;
+            padding: 24px 8%;
+            color: white;
+            background:
+                linear-gradient(
+                    rgba(15, 45, 25, 0.72),
+                    rgba(15, 45, 25, 0.78)
+                ),
+                url("{{ url_for('static', filename='img/tarim_bitki.jpg') }}");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 28px;
+            margin-bottom: 65px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .hero h1 {
+            margin: 0 0 15px;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.1;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: 0;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            box-shadow: none;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: -50px auto 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.10);
+        }
+
+        .upload-area {
+            text-align: center;
+            padding: 45px 25px;
+            border: 2px dashed #8ca891;
+            border-radius: 14px;
+            background: #f8fbf7;
+        }
+
+        .upload-area h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            margin: 0 0 25px;
+            color: #64748b;
+            box-shadow: none;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-button {
+            display: inline-block;
+            padding: 14px 24px;
+            border-radius: 10px;
+            background: #256d3d;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .upload-button:hover {
+            background: #1e5932;
+            transform: translateY(-1px);
+        }
+
+        .processing {
+            display: none;
+            margin-top: 18px;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 30px;
+        }
+
+        .image-card,
+        .prediction-card {
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: white;
+        }
+
+        .image-card h2,
+        .prediction-card h2 {
+            margin-top: 0;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 360px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .primary-result {
+            padding: 24px;
+            border-radius: 12px;
+            background: #eef7ef;
+            text-align: center;
+        }
+
+        .plant-name {
+            margin: 6px 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f6336;
+        }
+
+        .confidence {
+            margin: 4px 0 0;
+            color: #475569;
+            font-size: 1.05rem;
+        }
+
+        .score-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0 0;
+        }
+
+        .score-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .score-label {
+            font-weight: 600;
+        }
+
+        .score-value {
+            font-family: monospace;
+        }
+
+        .note {
+            margin-top: 30px;
+            padding: 18px 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .note p {
+            margin: 0;
+            box-shadow: none;
+        }
+
+        footer {
+            padding: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 800px) {
+            .nav {
+                justify-content: center;
+                margin-bottom: 50px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .image-preview {
+                height: 280px;
+            }
+        }
     </style>
 </head>
+
+
 <body>
 
-<header class="header">
-        
-    <div class="header__text">
-        <a class="active" href="/home">Home</a>
-        <a class="active" href="/contact">Contact</a>
-        <a class="active" href="/about">About</a>
-      </div>
-    <div class="header_">
-      <h1>Tarım Ürünleri Görü Sistemi</h1>
-      <h2>Aşağıya bitki görseli yükleyiniz ve bitkinin hangi tarım ürününe ait olduğunu öğrenin:</h2>
+<header class="hero">
+
+    <nav class="nav">
+        <a href="{{ url_for('anasayfa') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </nav>
+
+    <div class="hero-content">
+
+        <h1>🌿 Leaf-Based Plant Identification</h1>
+
+        <p>
+            Upload an image of a plant leaf and let the machine learning
+            model analyze it and classify the plant species.
+        </p>
+
     </div>
-    
 
-    
-  </header>
-  <main>
-    <div class="content">
-      <div class="box">
-        <!-- Dosya yükleme formu -->
-        <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
-            <label for="file-upload" class="upload-label">Görsel Yükle</label>
-            <input type="file" id="file-upload" name="file" class="upload-input" accept="image/*" onchange="submitForm()">
-        </form>
+</header>
 
-        <!-- Yüklenen dosya varsa göster -->
+
+<main class="container">
+
+    <section class="card">
+
+        <div class="upload-area">
+
+            <h2>Upload a Leaf Image</h2>
+
+            <p>
+                Choose a clear image containing a plant leaf.
+                The image will be processed by the trained classification model.
+            </p>
+
+            <form
+                method="POST"
+                action="{{ url_for('upload_file') }}"
+                enctype="multipart/form-data"
+                id="uploadForm"
+            >
+
+                <label for="file-upload" class="upload-button">
+                    Choose Image
+                </label>
+
+                <input
+                    type="file"
+                    id="file-upload"
+                    name="file"
+                    class="upload-input"
+                    accept="image/*"
+                    onchange="submitForm()"
+                    required
+                >
+
+            </form>
+
+            <div id="processing" class="processing">
+                Analyzing image...
+            </div>
+
+        </div>
+
+
         {% if filename %}
-        <div class="image-preview">
-          <img src="{{ url_for('static', filename='img/' + filename) }}" alt="Yüklenen resim" class="image-fit">
-      </div>
+
+        <div class="results-grid">
+
+            <div class="image-card">
+
+                <h2>Uploaded Image</h2>
+
+                <div class="image-preview">
+
+                    <img
+                        src="{{ url_for('static', filename='img/' + filename) }}"
+                        alt="Uploaded plant leaf"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="prediction-card">
+
+                <h2>Model Prediction</h2>
+
+
+                <!--
+                    Future version:
+                    Used after app.py returns plant_name and confidence.
+                -->
+
+                {% if plant_name %}
+
+                <div class="primary-result">
+
+                    <div>Identified Plant</div>
+
+                    <div class="plant-name">
+                        {{ plant_name }}
+                    </div>
+
+                    {% if confidence is defined %}
+
+                    <div class="confidence">
+                        Confidence: {{ confidence }}%
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!--
+                    Current version:
+                    Compatible with the existing app.py,
+                    which returns labeled_values.
+                -->
+
+                {% elif labeled_values %}
+
+                <p>
+                    Prediction scores for the nine plant classes:
+                </p>
+
+                <ul class="score-list">
+
+                    {% for label, value in labeled_values %}
+
+                    <li>
+                        <span class="score-label">
+                            {{ label }}
+                        </span>
+
+                        <span class="score-value">
+                            {{ "%.2f"|format(value * 100) }}%
+                        </span>
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
         {% endif %}
-    </div>
-      
 
-      <div class="result_">
-      <h2>Çıkan Sonuç:</h2>
-      <div class="result">
-        <ul>
-          <h3>Oranlar:</h3>
-          {% for label, value in labeled_values %}
-            <li>{{ label }}{{ value }}</li>
-            <br>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
 
-  </div>
-    
-  </main>
+        <div class="note">
 
-  <script>
-    // Dosya seçildiğinde formu otomatik olarak gönder
+            <p>
+                <strong>Note:</strong>
+                This is an educational machine learning project.
+                Predictions depend on the training dataset and image quality,
+                and the application should not be considered a professional
+                botanical identification system.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Built by Furkan Akın as a machine learning and web development project.
+</footer>
+
+
+<script>
+
     function submitForm() {
-        document.getElementById("uploadForm").submit();
+
+        const fileInput = document.getElementById("file-upload");
+
+        if (fileInput.files.length > 0) {
+
+            document.getElementById("processing").style.display = "block";
+
+            document.getElementById("uploadForm").submit();
+
+        }
+
     }
+
 </script>
 
-    
+
 </body>
 
 </html>
