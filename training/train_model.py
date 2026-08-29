@@ -1,6 +1,8 @@
 import zipfile
 import os
 from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 
 # Zip dosyasını çıkar
 with zipfile.ZipFile('plant-village-dataset-updated.zip', 'r') as zip_ref:
