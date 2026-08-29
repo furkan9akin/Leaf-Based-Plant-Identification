@@ -190,19 +190,24 @@ The repository contains the main components required for the web application and
 
 ```text
 Leaf-Based-Plant-Identification/
-Plant-Analyze-Website/
 │
 ├── README.md
+├── app.py
 ├── tarim.py
+├── requirements.txt
+├── .gitignore
 │
-├── M8L1-main/
-│   └── main.py
+├── training/
+│   └── train_model.py
 │
 ├── templates/
+│   ├── index.html
+│   ├── about.html
+│   └── contact.html
 │
-├── static/
-│
-└── instance/
+└── static/
+    ├── css/
+    └── img/
 ```
 
 > The exact repository structure may vary depending on where the trained model files are stored.
