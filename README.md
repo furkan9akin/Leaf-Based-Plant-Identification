@@ -120,9 +120,7 @@ This ensures that images uploaded by users have the same input format as the ima
 
 ## 🌱 Plant Classification
 
-The model produces prediction scores for **nine plant classes**.
-
-The current application associates the model outputs with the following plant categories:
+The model was trained to classify leaf images into **nine plant categories**:
 
 - Apple
 - Bell Pepper
@@ -134,9 +132,9 @@ The current application associates the model outputs with the following plant ca
 - Strawberry
 - Tomato
 
-The final class mapping is determined by the order used when the training dataset is loaded with Keras.
+During training, Keras automatically assigns class indices based on the dataset directory structure.
 
-The project therefore keeps the plant class order consistent with the model's training configuration.
+The application uses these prediction scores to identify the plant class associated with an uploaded leaf image.
 
 ---
 
