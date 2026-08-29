@@ -120,15 +120,23 @@ This ensures that images uploaded by users have the same input format as the ima
 
 ## 🌱 Plant Classification
 
-The model predicts one of the plant classes defined in:
+The model produces prediction scores for **nine plant classes**.
 
-```text
-labels.txt
-```
+The current application associates the model outputs with the following plant categories:
 
-Rather than manually specifying plant names inside the application, the prediction result is mapped to the corresponding class label used by the trained model.
+- Apple
+- Bell Pepper
+- Cherry
+- Corn
+- Grape
+- Peach
+- Potato
+- Strawberry
+- Tomato
 
-This makes it possible to keep the model and class definitions consistent.
+The final class mapping is determined by the order used when the training dataset is loaded with Keras.
+
+The project therefore keeps the plant class order consistent with the model's training configuration.
 
 ---
 
