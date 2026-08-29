@@ -298,16 +298,15 @@ Upload a leaf image through the interface to generate a plant prediction.
 
 ---
 
-## ⚠️ Model Files
+## ⚠️ Model File
 
-The application requires the trained model and label files:
+The application requires the trained model:
 
 ```text
 plant_village_model.h5
-
 ```
 
-These files must be placed in the location expected by the Python prediction code.
+This file must be placed in the location expected by the Python prediction code.
 
 If the model file is not included in the repository because of its file size, it must be downloaded or generated separately before the application can perform predictions.
 
