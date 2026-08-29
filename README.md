@@ -304,7 +304,7 @@ The application requires the trained model and label files:
 
 ```text
 plant_village_model.h5
-labels.txt
+
 ```
 
 These files must be placed in the location expected by the Python prediction code.
