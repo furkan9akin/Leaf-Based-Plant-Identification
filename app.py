@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash
 import os
-import tarim
+import predict
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -71,7 +71,7 @@ def upload_file():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         # Dosyayı kaydet
         file.save(file_path)
-        x = tarim.kerass(file_path)
+        x = predict.kerass(file_path)
         a = ["Tomato: ","Strawberry: ","Potato: ","Corn: ","Grape: ","Peach: ","Cherry: ","Bell pepper: ","Apple: "]
         # Yüklenen dosyanın URL'ini frontend'e gönder
         labeled_values = list(zip(a, x))
